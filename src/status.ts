@@ -15,6 +15,8 @@ interface StatusOptions {
   detail?: string;
   /** Namespace to filter the report by */
   namespace?: string;
+  /** When true, only untranslated keys are shown in the detailed view */
+  hideTranslated?: boolean;
 }
 
 /**
@@ -270,7 +272,7 @@ async function generateStatusReport (config: I18nextToolkitConfig): Promise<Stat
  */
 async function displayStatusReport (report: StatusReport, config: I18nextToolkitConfig, options: StatusOptions) {
   if (options.detail) {
-    await displayDetailedLocaleReport(report, config, options.detail, options.namespace)
+    await displayDetailedLocaleReport(report, config, options.detail, options.namespace, options.hideTranslated)
   } else if (options.namespace) {
     await displayNamespaceSummaryReport(report, config, options.namespace)
   } else {
@@ -291,8 +293,9 @@ async function displayStatusReport (report: StatusReport, config: I18nextToolkit
  * @param config - The i18next toolkit configuration object
  * @param locale - The locale code to display details for
  * @param namespaceFilter - Optional namespace to filter the display
+ * @param hideTranslated - When true, only untranslated keys are shown
  */
-async function displayDetailedLocaleReport (report: StatusReport, config: I18nextToolkitConfig, locale: string, namespaceFilter?: string) {
+async function displayDetailedLocaleReport (report: StatusReport, config: I18nextToolkitConfig, locale: string, namespaceFilter?: string, hideTranslated?: boolean) {
   if (locale === config.extract.primaryLanguage) {
     console.log(styleText('yellow', `Locale "${locale}" is the primary language. All keys are considered present.`))
     return
@@ -323,7 +326,8 @@ async function displayDetailedLocaleReport (report: StatusReport, config: I18nex
     console.log(styleText(['cyan', 'bold'], `\nNamespace: ${ns}`))
     printProgressBar('Namespace Progress', nsData.translatedKeys, nsData.totalKeys)
 
-    nsData.keyDetails.forEach(({ key, isTranslated }) => {
+    const keysToDisplay = hideTranslated ? nsData.keyDetails.filter(({ isTranslated }) => !isTranslated) : nsData.keyDetails
+    keysToDisplay.forEach(({ key, isTranslated }) => {
       const icon = isTranslated ? styleText('green', '✓') : styleText('red', '✗')
       console.log(`  ${icon} ${key}`)
     })

@@ -74,7 +74,20 @@ describe('CLI command parsing and dispatching', () => {
 
     expect(mockRunStatus).toHaveBeenCalledTimes(1)
     // Assert the actual two-argument call signature
-    expect(mockRunStatus).toHaveBeenCalledWith(config, { detail: 'en', namespace: undefined })
+    expect(mockRunStatus).toHaveBeenCalledWith(config, { detail: 'en', namespace: undefined, hideTranslated: false })
+  })
+
+  it('should parse the "status" command with --hide-translated and call runStatus', async () => {
+    vi.resetModules()
+    process.argv = ['node', 'cli.ts', 'status', 'en', '--hide-translated']
+    const config = { locales: ['en'], extract: {} }
+    mockLoadConfig.mockResolvedValue(config)
+
+    await import('../src/cli')
+
+    expect(mockRunStatus).toHaveBeenCalledTimes(1)
+    // Assert the actual two-argument call signature
+    expect(mockRunStatus).toHaveBeenCalledWith(config, { detail: 'en', namespace: undefined, hideTranslated: true })
   })
 
   it('should parse the "extract --ci" command and exit with error if files are updated', async () => {
@@ -286,7 +299,7 @@ describe('CLI command parsing and dispatching', () => {
 
     expect(mockRunStatus).toHaveBeenCalledTimes(1)
     expect(mockLoadConfig).toHaveBeenCalledWith('./custom/i18next.config.ts')
-    expect(mockRunStatus).toHaveBeenCalledWith(config, { detail: 'de', namespace: undefined })
+    expect(mockRunStatus).toHaveBeenCalledWith(config, { detail: 'de', namespace: undefined, hideTranslated: false })
   })
 
   it('should parse the "rename-key" command', async () => {

@@ -170,6 +170,7 @@ Displays a health check of your project's translation status. Can run without a 
 
 **Options:**
 - `--namespace <ns>, -n <ns>`: Filter the report by a specific namespace.
+- `--hide-translated`: Hide already translated keys in the detailed view, showing only missing translations.
 
 **Usage Examples:**
 
@@ -185,6 +186,12 @@ npx i18next-cli status --namespace common
 
 # Get a detailed report for the 'de' locale, showing only the 'common' namespace
 npx i18next-cli status de --namespace common
+
+# Show only the untranslated keys for the 'de' locale
+npx i18next-cli status de --hide-translated
+
+# Combine options to see only missing translations in a specific namespace
+npx i18next-cli status de --namespace common --hide-translated
 ```
 
 The detailed view provides a rich, at-a-glance summary for each namespace, followed by a list of every key and its translation status.

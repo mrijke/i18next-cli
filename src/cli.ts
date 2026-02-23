@@ -98,6 +98,7 @@ program
   .command('status [locale]')
   .description('Display translation status. Provide a locale for a detailed key-by-key view.')
   .option('-n, --namespace <ns>', 'Filter the status report by a specific namespace')
+  .option('--hide-translated', 'Hide already translated keys in the detailed view')
   .action(async (locale, options) => {
     const cfgPath = program.opts().config
     let config = await loadConfig(cfgPath)
@@ -112,7 +113,7 @@ program
       console.log(styleText('green', 'Project structure detected successfully!'))
       config = detected as I18nextToolkitConfig
     }
-    await runStatus(config, { detail: locale, namespace: options.namespace })
+    await runStatus(config, { detail: locale, namespace: options.namespace, hideTranslated: !!options.hideTranslated })
   })
 
 program
